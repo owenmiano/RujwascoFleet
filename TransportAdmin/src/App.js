@@ -1,12 +1,14 @@
 import './App.css';
 import React from "react"
-import Login from './components/AdminLogin';
+
+import Home from './components/Home';
 function App(){
     return(
         <div>
-          
-        <Login/>
+           
+           <Home/>
         </div>
+
       
     )
 }

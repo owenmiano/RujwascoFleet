@@ -1,17 +1,16 @@
-import React from "react";
-import { Route,Switch } from "react-router-dom";
-import Home from "./Home";
+// import React from "react";
+// import Home from "./Home";
 // import Login from './components/AdminLogin';
 
-function Routes() {
-    return (
-      // <Route path="/login"  component={Login} />
-         <Switch>
-   
+// function Routes() {
+//     return (
+//          <div>
+          
+         
 
-         <Route path="/homeee"  component={Home} />
-         </Switch>
-    );
+//          </div>
+         
+//     );
 
-  }
-  export default Routes;
+//   }
+//   export default Routes;
