@@ -17,7 +17,21 @@ module.exports =(Sequelize, DataTypes)=>{
         allowNull: false,
         unique: true
     } ,
+    driverId:{
+        type:DataTypes.INTEGER
+    }
     });
+ 
+    Vehicles.associate=models=>{
+        Vehicles.belongsTo(models.drivers,{
+            foreignKey:{
+                allowNull:false
+            }
+        })
+    }
+
+
+
     return Vehicles;
     };
     

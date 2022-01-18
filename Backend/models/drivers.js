@@ -18,6 +18,13 @@ module.exports =(Sequelize, DataTypes)=>{
       
     } ,
     });
-    return drivers;
+   
+    drivers.associate=models=>{
+      drivers.hasOne(models.Vehicles)
+      drivers.hasMany(models.Bookings)
+
+
+    }
+   return drivers;
     };
     

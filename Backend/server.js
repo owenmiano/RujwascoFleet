@@ -1,6 +1,7 @@
 const express=require('express');
 const app=express();
 var cors = require('cors')
+const router=express.Router();
 
 
 const db=require("./models");
@@ -17,5 +18,5 @@ app.use(cors())
         console.log(`listening on http://localhost:${PORT}`);
     });
 });
-
+module.exports= router
 

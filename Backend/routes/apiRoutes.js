@@ -8,8 +8,8 @@ router.post("/addVehicle",(req,res) =>{
     db.Vehicles.create({
         VehicleName: req.body.VehicleName,
         VehicleType: req.body.VehicleType,
-        RegNo: req.body.RegNo
-        
+        RegNo: req.body.RegNo,
+        driverId:req.body.driverId
  }).then(submittedDetails=> res.send("Vehicle has been added successfully!!"));
 
 });
@@ -24,5 +24,55 @@ router.post("/addDriver",(req,res)=>{
 });
 
 
+router.post("/addBooking",(req,res)=>{
+    db.Bookings.create({
+        EmployeeName: req.body.EmployeeName,
+        destination: req.body.destination,
+        purpose: req.body.purpose
+
+
+    }).then(submittedDetails=>res.send("Booking has been added successfully"))
+});
+
+//get All drivers 
+router.get("/allDrivers",(req,res)=>{
+    db.drivers.findAll({
+        include: [{
+            model: db.Vehicles,
+           
+              attributes: ['vehicleName','vehicleType','RegNo']
+            
+          }]
+    }).then(allDrivers=>res.send(allDrivers))
+});
+
+
+//get all Vehicles
+router.get("/allVehicles",(req,res)=>{
+    db.Vehicles.findAll({
+        include: [{
+            model: db.drivers,
+           
+              attributes: ['driverName','phoneNO',]
+            
+          }]
+        }).then(allVehicles=>res.send(allVehicles))
+    });
+
+
+    router.get("/allBookings",(req,res)=>{
+        db.Bookings.findAll({
+            
+            }).then(allBookings=>res.send(allBookings))
+        });
+    
+
+        
+    router.get("/GroupedBookings",(req,res)=>{
+        db.Bookings.findAll({
+            group: ['destination']
+            }).then(GroupedBookings=>res.send(GroupedBookings))
+        });
+       
 
 module.exports= router
