@@ -2,6 +2,7 @@ const express =require("express");
 const res = require("express/lib/response");
 const router=express.Router();
 const db = require("../models");
+const Sequelize = require('sequelize');
 
 /// add vehicle
 router.post("/addVehicle",(req,res) =>{
@@ -60,18 +61,38 @@ router.get("/allVehicles",(req,res)=>{
     });
 
 
-    router.get("/allBookings",(req,res)=>{
+    router.get("/GroupedBookings",(req,res)=>{
+        const Op = Sequelize.Op;
+        const TODAY_START = new Date().setHours(0, 0, 0, 0);
+        const NOW = new Date();
+
         db.Bookings.findAll({
+            where: {
+                createdAt: { 
+                  [Op.gt]: TODAY_START,
+                  [Op.lt]: NOW
+                },
+              },
             
-            }).then(allBookings=>res.send(allBookings))
-        });
+            }).then((GroupedBookings)=>{
+                const employees=GroupedBookings.reduce((r,a)=>{
+                    r[a.destination]=r[a.destination] || [];
+                    r[a.destination].push(a);
+                    return r;
+                },Object.create(null))
+
+             res.send(employees)
+            })           
+   });
     
 
-        
-    router.get("/GroupedBookings",(req,res)=>{
+    router.get("/allBookings",(req,res)=>{
+     
+
         db.Bookings.findAll({
-            group: ['destination']
-            }).then(GroupedBookings=>res.send(GroupedBookings))
+           
+           
+            }).then(allBookings=>res.send(allBookings))
         });
        
 
