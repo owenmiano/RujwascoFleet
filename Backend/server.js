@@ -11,7 +11,7 @@ app.use(cors())
   app.use(express.json());
 
   const apiRoutes=require("./routes/apiRoutes");
-  app.use("/api", apiRoutes);
+  app.use(apiRoutes);
 
   db.sequelize.sync().then(()=>{
     app.listen(PORT,()=>{

@@ -25,7 +25,7 @@ router.post("/addDriver",(req,res)=>{
 });
 
 
-router.post("/addBooking",(req,res)=>{
+router.post(`/addBooking`,(req,res)=>{
     db.Bookings.create({
         EmployeeName: req.body.EmployeeName,
         destination: req.body.destination,
@@ -75,10 +75,16 @@ router.get("/allVehicles",(req,res)=>{
               },
             
             }).then((GroupedBookings)=>{
+                
                 const employees=GroupedBookings.reduce((r,a)=>{
+                   
+                        
+                 
                     r[a.destination]=r[a.destination] || [];
+                    
                     r[a.destination].push(a);
                     return r;
+            
                 },Object.create(null))
 
              res.send(employees)
@@ -94,6 +100,7 @@ router.get("/allVehicles",(req,res)=>{
            
             }).then(allBookings=>res.send(allBookings))
         });
+
        
 
 module.exports= router
