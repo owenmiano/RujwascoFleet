@@ -60,7 +60,7 @@ router.get("/allVehicles",(req,res)=>{
         }).then(allVehicles=>res.send(allVehicles))
     });
 
-
+//get all bookings for today grouped by destination
     router.get("/GroupedBookings",(req,res)=>{
         const Op = Sequelize.Op;
         const TODAY_START = new Date().setHours(0, 0, 0, 0);
@@ -77,21 +77,24 @@ router.get("/allVehicles",(req,res)=>{
             }).then((GroupedBookings)=>{
                 
                 const employees=GroupedBookings.reduce((r,a)=>{
-                   
+                    // for (let number = 4; number < r[a.destination].length; number++) {
                         
-                 
+                        
                     r[a.destination]=r[a.destination] || [];
+                     
                     
+                     
                     r[a.destination].push(a);
+             
                     return r;
-            
-                },Object.create(null))
+                  
 
+                    },Object.create(null))
              res.send(employees)
             })           
    });
     
-
+// get all bookings since the app was deployed
     router.get("/allBookings",(req,res)=>{
      
 

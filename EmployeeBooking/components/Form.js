@@ -20,7 +20,7 @@ const  Form = ()=>{
         const data=JSON.stringify(Bookings)
         console.log(data)
      
-         axios.post('http://192.168.100.3:4012/addBooking',data, {headers: {
+         axios.post('http://192.168.100.5:4012/addBooking',data, {headers: {
             'Content-Type': 'application/json',
             Accept:'application/json'
         }})
