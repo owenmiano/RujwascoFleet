@@ -3,7 +3,7 @@ const res = require("express/lib/response");
 const router=express.Router();
 const db = require("../models");
 const Sequelize = require('sequelize');
-
+const _ = require("lodash");
 /// add vehicle
 router.post("/addVehicle",(req,res) =>{
     db.Vehicles.create({
@@ -24,9 +24,10 @@ router.post("/addDriver",(req,res)=>{
     }).then(submittedDetails=>res.send("Driver profile has been added successfully"))
 });
 
-
+// employee makes a booking
 router.post(`/addBooking`,(req,res)=>{
     db.Bookings.create({
+        EmployeedeviceID: req.body.EmployeedeviceID,
         EmployeeName: req.body.EmployeeName,
         destination: req.body.destination,
         purpose: req.body.purpose
@@ -74,22 +75,25 @@ router.get("/allVehicles",(req,res)=>{
                 },
               },
             
-            }).then((GroupedBookings)=>{
-                
-                const employees=GroupedBookings.reduce((r,a)=>{
-                    // for (let number = 4; number < r[a.destination].length; number++) {
-                        
-                        
-                    r[a.destination]=r[a.destination] || [];
-                     
+            }).then((AllBookings)=>{
+                 const employees=AllBookings.reduce((groupedPeople,person)=>{
                     
-                     
-                    r[a.destination].push(a);
-             
-                    return r;
-                  
 
-                    },Object.create(null))
+                   const destination=person.destination;
+                                        
+                  if(groupedPeople[destination]==null) groupedPeople[destination]=[] ;
+
+                  groupedPeople[destination].push(person)
+                    
+                //   for(let i=0;i<groupedPeople[destination].length;i++){
+                //       if(groupedPeople[destination][i].length ==4){
+                //     groupedPeople[destination].push(person[i])
+                   
+                //       }
+                //   }   
+            return groupedPeople;
+                   },Object.create(null))
+                   
              res.send(employees)
             })           
    });
@@ -104,6 +108,21 @@ router.get("/allVehicles",(req,res)=>{
             }).then(allBookings=>res.send(allBookings))
         });
 
-       
+// get employee booking with their deviceID
+router.get(`/find/:id`,(req,res)=>{
+    const Op = Sequelize.Op;
+    const TODAY_START = new Date().setHours(0, 0, 0, 0);
+    const NOW = new Date();
+
+    db.Bookings.findAll({
+        where: {
+            createdAt: { 
+              [Op.gt]: TODAY_START,
+              [Op.lt]: NOW
+            },
+            EmployeedeviceID:req.params.id
+          },
+       }).then(individualBooking=>res.send(individualBooking))
+    });
 
 module.exports= router

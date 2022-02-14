@@ -1,22 +1,37 @@
-import React, { useState } from "react";
+import React, { useState,useEffect } from "react";
 import { View ,TextInput,StyleSheet, TouchableOpacity, Text,Alert} from "react-native";
- import axios, { Axios } from "axios";  
+ import axios from "axios";  
+ import DeviceInfo from 'react-native-device-info'
+
+
 const  Form = ()=>{
      const[EmployeeName,setEmployeeName]=useState('');
      const[destination,setDestination]=useState('');
      const[purpose,setPurpose]=useState('')
      const[isPending,setIsPending]=useState(false)
-     
+     const[EmployeedeviceID,setEmployeeDeviceID]=useState('');
+
+     useEffect(() => {
+        setEmployeeDeviceID(DeviceInfo.getUniqueId)
+})
+
      handleSubmit=(e)=>{
+
          e.preventDefault();
-       
          setIsPending(true);
+         
+           
+
+         
 
          const Bookings={
+            EmployeedeviceID,
              EmployeeName,
             destination,
-            purpose
-        };
+            purpose,
+        
+            };
+
         const data=JSON.stringify(Bookings)
         console.log(data)
      
@@ -33,8 +48,18 @@ const  Form = ()=>{
                  { text: "OK" }
              ]
            );
-          }).catch(error => console.error(error));
-      
+          }).catch(error =>{
+           console.log(error);
+           setIsPending(false)
+           Alert.alert("Error!!",error.message,
+                 [
+                     {
+                         text:"Try Again",
+                     }
+                 ]
+           )
+                 } )
+           
      }
 
 

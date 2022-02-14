@@ -2,6 +2,10 @@
 module.exports =(Sequelize, DataTypes)=>{
     
     const Bookings=Sequelize.define("Bookings",{
+        EmployeedeviceID:{
+            type: DataTypes.STRING,
+            allowNull: false,
+        } ,
         EmployeeName:{
            type: DataTypes.STRING,
            allowNull: false,
