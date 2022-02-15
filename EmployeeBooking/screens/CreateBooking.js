@@ -1,21 +1,22 @@
-import React, { useState,useEffect } from "react";
-import { View ,TextInput,StyleSheet, TouchableOpacity, Text,Alert} from "react-native";
- import axios from "axios";  
- import DeviceInfo from 'react-native-device-info'
+import React,{useEffect,useState} from "react";
+import { Text, View,TextInput,TouchableOpacity,Alert,StyleSheet, ScrollView } from "react-native";
+import DeviceInfo from 'react-native-device-info'
+import axios from "axios";  
+import KeyboardAvoidingView from "react-native/Libraries/Components/Keyboard/KeyboardAvoidingView";
+
+function CreateBooking({navigation}){
+    const[EmployeeName,setEmployeeName]=useState('');
+    const[destination,setDestination]=useState('');
+    const[purpose,setPurpose]=useState('')
+    const[isPending,setIsPending]=useState(false)
+    const[EmployeedeviceID,setEmployeeDeviceID]=useState('');
 
 
-const  Form = ()=>{
-     const[EmployeeName,setEmployeeName]=useState('');
-     const[destination,setDestination]=useState('');
-     const[purpose,setPurpose]=useState('')
-     const[isPending,setIsPending]=useState(false)
-     const[EmployeedeviceID,setEmployeeDeviceID]=useState('');
-
-     useEffect(() => {
+    useEffect(() => {
         setEmployeeDeviceID(DeviceInfo.getUniqueId)
 })
 
-     handleSubmit=(e)=>{
+   handleSubmit=(e)=>{
 
          e.preventDefault();
          setIsPending(true);
@@ -48,10 +49,11 @@ const  Form = ()=>{
                  { text: "OK" }
              ]
            );
+           navigation.navigate('home')
           }).catch(error =>{
            console.log(error);
            setIsPending(false)
-           Alert.alert("Error!!",error.message,
+           Alert.alert("Sorry, something went wrong",error.message,
                  [
                      {
                          text:"Try Again",
@@ -61,12 +63,11 @@ const  Form = ()=>{
                  } )
            
      }
-
-
     return(
+        <KeyboardAvoidingView>
+            <ScrollView>
         <View style={styles.container}>
-
-          <TextInput style={styles.inputBox}
+              <TextInput style={styles.inputBox}
            placeholderTextColor='#ffffff'
          
 
@@ -97,17 +98,20 @@ const  Form = ()=>{
                <Text style={styles.buttonText}>Submitting...</Text>
            </TouchableOpacity>}
 
-      </View>
+        </View>
+        </ScrollView>
+        </KeyboardAvoidingView>
     )
 }
 const styles=StyleSheet.create({
     container:{
-        flexGrow:1,
+        
         justifyContent:'center',
         alignItems:'center'
     },
     inputBox:{
         width:300,
+        // marginTop:25,
         marginVertical:10,
         borderRadius:25,
         paddingHorizontal:15,
@@ -128,5 +132,9 @@ const styles=StyleSheet.create({
         color:'#ffffff',
         textAlign:'center'
     }
+
+
 })
-export default Form;
+
+
+export default CreateBooking;

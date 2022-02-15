@@ -1,11 +1,11 @@
 import React from 'react'
 // import {  StyleSheet,View } from 'react-native'
 // import Booking from './components/Booking'
-import NavigationContainer from '@react-navigation/native';
-import createNativeStackNavigator   from '@react-navigation/native-stack'
+import {NavigationContainer} from '@react-navigation/native';
+import {createNativeStackNavigator}   from '@react-navigation/native-stack'
 import { Text, View } from 'react-native';
 
-const Stack=createNativeStackNavigator()
+const Stack=createNativeStackNavigator();
 
 function HomeScreen(){
     return(
