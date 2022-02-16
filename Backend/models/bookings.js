@@ -22,7 +22,7 @@ module.exports =(Sequelize, DataTypes)=>{
     } ,
     AssignmentStatus:{
         type: DataTypes.STRING,
-        defaultValue:'Not Assigned'
+        defaultValue:'Pending'
     } ,
     driverId:{
        type:DataTypes.INTEGER,

@@ -25,12 +25,12 @@ function App(){
          >
              <Stack.Screen name="home" component={HomeScreen} options={{
           headerTitleAlign: "center",
-          title: 'Your Bookings',
+          title: 'Bookings',
       }} />
        <Stack.Screen name="createBooking" component={CreateBooking}
         options={{
             headerTitleAlign: "center",
-            title: 'Create New Booking',
+            title: 'Create  Booking',
         }} 
        
        />

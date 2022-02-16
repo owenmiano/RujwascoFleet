@@ -1,0 +1,17 @@
+{
+	"folders": [
+		{
+			"path": "BackEnd"
+		},
+		{
+			"path": "DriverApp"
+		},
+		{
+			"path": "EmployeeBooking"
+		},
+		{
+			"path": "TransportAdmin"
+		}
+	],
+	"settings": {}
+}

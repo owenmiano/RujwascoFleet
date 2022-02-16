@@ -1,5 +1,5 @@
 import React,{useEffect,useState} from "react";
-import { Text, View,TextInput,TouchableOpacity,Alert,StyleSheet, ScrollView } from "react-native";
+import { Text, View,TextInput,TouchableOpacity,Alert,StyleSheet, ScrollView,StatusBar } from "react-native";
 import DeviceInfo from 'react-native-device-info'
 import axios from "axios";  
 import KeyboardAvoidingView from "react-native/Libraries/Components/Keyboard/KeyboardAvoidingView";
@@ -14,7 +14,7 @@ function CreateBooking({navigation}){
 
     useEffect(() => {
         setEmployeeDeviceID(DeviceInfo.getUniqueId)
-})
+},[])
 
    handleSubmit=(e)=>{
 
@@ -49,7 +49,10 @@ function CreateBooking({navigation}){
                  { text: "OK" }
              ]
            );
-           navigation.navigate('home')
+           setTimeout(() => {
+            navigation.navigate('home')   
+             }, 2000); 
+          
           }).catch(error =>{
            console.log(error);
            setIsPending(false)
@@ -71,24 +74,23 @@ function CreateBooking({navigation}){
            placeholderTextColor='#ffffff'
          
 
-           onChangeText={setEmployeeName}
+           onChangeText={(val)=>setEmployeeName(val)}
            placeholder="Employee Name"
           
           />
           <TextInput style={styles.inputBox}
            placeholder="Destination"
            placeholderTextColor='#ffffff'
-           autoCapitalize="none"
          
 
-           onChangeText={setDestination}
+           onChangeText={(val)=>setDestination(val.toLowerCase())}
           />
 
           <TextInput style={styles.inputBox}
            placeholder="Purpose"
            placeholderTextColor='#ffffff'
-         
-           onChangeText={setPurpose}
+           multiline
+           onChangeText={(val)=>setPurpose(val)}
           />
            
          { !isPending && <TouchableOpacity style={styles.button} onPress={handleSubmit}>
@@ -105,7 +107,8 @@ function CreateBooking({navigation}){
 }
 const styles=StyleSheet.create({
     container:{
-        
+        marginTop: StatusBar.currentHeight || 0,
+
         justifyContent:'center',
         alignItems:'center'
     },

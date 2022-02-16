@@ -83,7 +83,8 @@ router.get("/allVehicles",(req,res)=>{
                                         
                   if(groupedPeople[destination]==null) groupedPeople[destination]=[] ;
 
-                  groupedPeople[destination].push(person)
+                //  if(groupedPeople[destination].length==4) 
+                 groupedPeople[destination].push(person);
                     
                 //   for(let i=0;i<groupedPeople[destination].length;i++){
                 //       if(groupedPeople[destination][i].length ==4){
