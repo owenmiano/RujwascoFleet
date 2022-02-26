@@ -3,12 +3,12 @@ import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import HomeScreen from'./screens/HomeScreen'
 import CreateBooking from "./screens/CreateBooking";
-
-
+import { DeviceProvider } from "./DeviceContext";
 const Stack=createNativeStackNavigator();
 
 function App(){
  return(
+   <DeviceProvider>
      <NavigationContainer>
          <Stack.Navigator initialRouteName="home"
          screenOptions={{
@@ -36,6 +36,7 @@ function App(){
        />
          </Stack.Navigator>
 </NavigationContainer>
+</DeviceProvider>
  )
 }
 export default App;

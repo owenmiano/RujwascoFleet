@@ -1,36 +1,79 @@
-import React, { useState } from "react";
+import React, { useEffect, useState,useContext } from "react";
 import axios from "axios";
-import { StyleSheet,Text,TouchableOpacity,View, FlatList} from "react-native";
-
-const DATA = [
-    {
-      id: 1,
-      title: 'First Item',
-      status: 'pending'
-    },
-    {
-      id: 2,
-      title: 'Second Item',
-      status: 'pending'
-    },
-    {
-      id: 3,
-      title: 'Third Item',
-      status: 'pending'
-    },
-  ];
+import { DeviceContext } from "../DeviceContext";
+import { StyleSheet,Text,TouchableOpacity,View, FlatList, Alert} from "react-native";
 
 function HomeScreen({navigation}){
- 
-const [data,setData]=useState(DATA)   
+const[EmployeedeviceID,setEmployeeDeviceID]=useContext(DeviceContext)
+const [booking,setBooking]=useState([])   
+
+// const {EmployeedeviceID}=route?.params || {};
+
+useEffect(()=>{
+    // getBooking();
+    fetch(`http://192.168.100.4:4012/find/${EmployeedeviceID}`,{
+        method: 'GET',
+        headers: {
+            Accept: 'application/json',
+            'Content-Type': 'application/json'
+        }
+    })
+    .then(response => response.json())
+    .then(data => {
+      setBooking(data)
+        console.log(data);
+    })
+    .catch(error =>{
+    console.log(error)
+    Alert.alert("Sorry, something went wrong",error.message,
+    [
+        {
+            text:"Try Again",
+        }
+    ]
+  )
+    } )
+},[])
 
 
-const Item = ({title,status}) => {
+// const getBooking = async  () => {
+   
+//    await fetch(`http://192.168.100.4:4012/find/${EmployeedeviceID}`,{
+//       method: 'GET',
+//       headers: {
+//           Accept: 'application/json',
+//           'Content-Type': 'application/json'
+//       }
+//   })
+//   .then(response => response.json())
+//   .then(data => {
+//     setBooking(data)
+//       console.log(data);
+//   })
+//   .catch(error =>{
+//   console.log(error)
+//   Alert.alert("Sorry, something went wrong",error.message,
+//   [
+//       {
+//           text:"Try Again",
+//       }
+//   ]
+// )
+//   } )
+
+// } 
+
+
+
+const Item = ({destination,AssignmentStatus}) => {
+          const color =AssignmentStatus=='Pending' ? "#ff0000" : "#008000"
+  
+
           return(
     <TouchableOpacity  style={{flex:1,marginBottom:8,justifyContent:'center',marginLeft:5  }}>
             
-    <Text style={{fontSize:15,marginBottom:15,color:'green'}}>Destination:{title}</Text> 
-    <Text style={{fontSize:10,color:'red'}}>Assignment Status:{status}</Text> 
+    <Text style={{fontSize:17,marginBottom:15,color:'green'}}>Destination: {destination}</Text> 
+    <Text style={{fontSize:13}}>Assignment Status: {AssignmentStatus}</Text> 
 
               </TouchableOpacity>
               
@@ -45,20 +88,23 @@ const Item = ({title,status}) => {
     }
 
     return(
-              
              <View style={styles.container}>
+                 
                    <FlatList
-                    data={data}
+                    data={booking}
+                    extraData={booking}
                      keyExtractor={(trip)=> trip.id.toString()}
                     renderItem={({item})=>(
-                        <Item title={item.title} status={item.status}/>
+                        <Item destination={item.destination} AssignmentStatus={item.AssignmentStatus}/>
                     )}
                      ItemSeparatorComponent={renderSeparator}
                    />
                  <TouchableOpacity style={styles.fab} onPress={()=> navigation.navigate('createBooking')}>
                      <Text style={styles.fabIcon}>+</Text>
                  </TouchableOpacity>
+               
              </View>
+             
         )
 }
 const styles=StyleSheet.create({

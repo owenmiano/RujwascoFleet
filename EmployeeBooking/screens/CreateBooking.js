@@ -1,7 +1,7 @@
-import React,{useEffect,useState} from "react";
+import React,{useState,useContext} from "react";
 import { Text, View,TextInput,TouchableOpacity,Alert,StyleSheet, ScrollView,StatusBar } from "react-native";
-import DeviceInfo from 'react-native-device-info'
 import axios from "axios";  
+import { DeviceContext } from "../DeviceContext";
 import KeyboardAvoidingView from "react-native/Libraries/Components/Keyboard/KeyboardAvoidingView";
 
 function CreateBooking({navigation}){
@@ -9,14 +9,12 @@ function CreateBooking({navigation}){
     const[destination,setDestination]=useState('');
     const[purpose,setPurpose]=useState('')
     const[isPending,setIsPending]=useState(false)
-    const[EmployeedeviceID,setEmployeeDeviceID]=useState('');
+    const[EmployeedeviceID,setEmployeeDeviceID]=useContext(DeviceContext);
 
 
-    useEffect(() => {
-        setEmployeeDeviceID(DeviceInfo.getUniqueId)
-},[])
+  
 
-   handleSubmit=(e)=>{
+   const handleSubmit=(e)=>{
 
          e.preventDefault();
          setIsPending(true);
@@ -36,7 +34,7 @@ function CreateBooking({navigation}){
         const data=JSON.stringify(Bookings)
         console.log(data)
      
-         axios.post('http://192.168.100.5:4012/addBooking',data, {headers: {
+         axios.post('http://192.168.100.4:4012/addBooking',data, {headers: {
             'Content-Type': 'application/json',
             Accept:'application/json'
         }})
@@ -50,7 +48,7 @@ function CreateBooking({navigation}){
              ]
            );
            setTimeout(() => {
-            navigation.navigate('home')   
+            navigation.navigate('home',{EmployeedeviceID})   
              }, 2000); 
           
           }).catch(error =>{

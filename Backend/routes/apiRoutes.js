@@ -116,6 +116,12 @@ router.get(`/find/:id`,(req,res)=>{
     const NOW = new Date();
 
     db.Bookings.findAll({
+        include: [{
+            model: db.drivers,
+           
+              attributes: ['driverName','phoneNO']
+            
+          }],
         where: {
             createdAt: { 
               [Op.gt]: TODAY_START,
@@ -125,5 +131,20 @@ router.get(`/find/:id`,(req,res)=>{
           },
        }).then(individualBooking=>res.send(individualBooking))
     });
+
+// update an individual employee booking
+router.get("/update/:id",(req,res)=>{
+db.Bookings.update({ AssignmentStatus: 'Assigned' ,driverId:3}, {
+    where: {
+        id:req.params.id
+
+    }
+}).then(updateBooking=>res.send(`Record with id ${id} has been updated successfully`))
+.catch(error=>res.send(error))
+})
+
+
+
+
 
 module.exports= router
