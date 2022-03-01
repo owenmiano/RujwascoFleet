@@ -5,6 +5,8 @@ export const DeviceContext=createContext();
 
 export const DeviceProvider= props =>{
     const[EmployeedeviceID,setEmployeeDeviceID]=useState('');
+    const [booking,setBooking]=useState([])   
+
     useEffect(() => {
         setEmployeeDeviceID(DeviceInfo.getUniqueId)
 },[])

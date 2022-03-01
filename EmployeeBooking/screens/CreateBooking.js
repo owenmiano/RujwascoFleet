@@ -5,12 +5,13 @@ import { DeviceContext } from "../DeviceContext";
 import KeyboardAvoidingView from "react-native/Libraries/Components/Keyboard/KeyboardAvoidingView";
 
 function CreateBooking({navigation}){
+    
     const[EmployeeName,setEmployeeName]=useState('');
     const[destination,setDestination]=useState('');
     const[purpose,setPurpose]=useState('')
     const[isPending,setIsPending]=useState(false)
     const[EmployeedeviceID,setEmployeeDeviceID]=useContext(DeviceContext);
-
+    // const [booking,setBooking]=useContext(DeviceContext);
 
   
 
@@ -39,7 +40,10 @@ function CreateBooking({navigation}){
             Accept:'application/json'
         }})
          .then(()=>{
+     
+            //  Bookings(null)
             setIsPending(false)
+
             Alert.alert(
              "Booking Status",
              "SUCCESSFUL!!",

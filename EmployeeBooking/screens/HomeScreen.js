@@ -1,67 +1,45 @@
 import React, { useEffect, useState,useContext } from "react";
 import axios from "axios";
 import { DeviceContext } from "../DeviceContext";
-import { StyleSheet,Text,TouchableOpacity,View, FlatList, Alert} from "react-native";
+import { StyleSheet,Text,TouchableOpacity,View, FlatList, Alert,Modal,Dimensions} from "react-native";
+
+const WIDTH=Dimensions.get('window').width;
+const HEIGHT_MODAL=280;
+
+
 
 function HomeScreen({navigation}){
 const[EmployeedeviceID,setEmployeeDeviceID]=useContext(DeviceContext)
-const [booking,setBooking]=useState([])   
+const [booking,setBooking]=useState(DeviceContext)   
+const [isModalVisible,setisModalVisible]=useState(false)
 
 // const {EmployeedeviceID}=route?.params || {};
 
 useEffect(()=>{
-    // getBooking();
-    fetch(`http://192.168.100.4:4012/find/${EmployeedeviceID}`,{
-        method: 'GET',
-        headers: {
-            Accept: 'application/json',
-            'Content-Type': 'application/json'
-        }
+    axios.get(`http://192.168.100.4:4012/find/${EmployeedeviceID}`,{
+      method: 'GET',
+      headers: {
+          Accept: 'application/json',
+          'Content-Type': 'application/json'
+      }
+  })
+  .then(response => {
+      const result=response.data
+      setBooking(result)
+      console.log(result);
+    }).catch(error =>{
+          console.log(error)
     })
-    .then(response => response.json())
-    .then(data => {
-      setBooking(data)
-        console.log(data);
-    })
-    .catch(error =>{
-    console.log(error)
-    Alert.alert("Sorry, something went wrong",error.message,
-    [
-        {
-            text:"Try Again",
-        }
-    ]
-  )
-    } )
-},[])
 
 
-// const getBooking = async  () => {
-   
-//    await fetch(`http://192.168.100.4:4012/find/${EmployeedeviceID}`,{
-//       method: 'GET',
-//       headers: {
-//           Accept: 'application/json',
-//           'Content-Type': 'application/json'
-//       }
-//   })
-//   .then(response => response.json())
-//   .then(data => {
-//     setBooking(data)
-//       console.log(data);
-//   })
-//   .catch(error =>{
-//   console.log(error)
-//   Alert.alert("Sorry, something went wrong",error.message,
-//   [
-//       {
-//           text:"Try Again",
-//       }
-//   ]
-// )
-//   } )
 
-// } 
+
+ 
+   },[])
+
+   const onPressDestination=()=>{
+       setisModalVisible(true)
+   }
 
 
 
@@ -70,7 +48,10 @@ const Item = ({destination,AssignmentStatus}) => {
   
 
           return(
-    <TouchableOpacity  style={{flex:1,marginBottom:8,justifyContent:'center',marginLeft:5  }}>
+    <TouchableOpacity  
+    style={{flex:1,marginBottom:8,justifyContent:'center',marginLeft:5 }}
+    onPress={()=>onPressDestination()}
+    >
             
     <Text style={{fontSize:17,marginBottom:15,color:'green'}}>Destination: {destination}</Text> 
     <Text style={{fontSize:13}}>Assignment Status: {AssignmentStatus}</Text> 
@@ -95,10 +76,36 @@ const Item = ({destination,AssignmentStatus}) => {
                     extraData={booking}
                      keyExtractor={(trip)=> trip.id.toString()}
                     renderItem={({item})=>(
-                        <Item destination={item.destination} AssignmentStatus={item.AssignmentStatus}/>
+                        <Item id={item.id}destination={item.destination} AssignmentStatus={item.AssignmentStatus}/>
                     )}
                      ItemSeparatorComponent={renderSeparator}
                    />
+                   <Modal 
+                   transparent={true}
+                   animationType='fade'
+                   visible={isModalVisible}
+                //    onRequestClose={()=>setisModalVisible(false)}
+                   >
+                       <View style={styles.modalView}>
+                       <View style={styles.modal}>
+                           <View style={styles.textView}>
+                         <Text style={styles.modalText}>Driver Name: Owen Miano Kabugi</Text>
+                         
+                         <Text style={styles.modalText}>Vehicle Name: Toyota Hilux single Cab</Text>
+                         <Text style={styles.modalText}>Vehicle Reg No: KCT 940S</Text>
+                         </View>
+                         <View>
+                              <TouchableOpacity style={styles.modalCloseButton} onPress={()=>setisModalVisible(false)}>
+                                 <Text>Close</Text>
+                              </TouchableOpacity>
+                         </View>
+                       </View>
+                       </View>
+                   </Modal>
+             
+
+
+
                  <TouchableOpacity style={styles.fab} onPress={()=> navigation.navigate('createBooking')}>
                      <Text style={styles.fabIcon}>+</Text>
                  </TouchableOpacity>
@@ -127,6 +134,31 @@ fab:{
         fontSize: 20, 
         color: 'white' 
       },
+      modalView:{
+          flex:1,
+          alignItems:'center',
+          justifyContent:'center'
+      },
+      modal:{
+          height:HEIGHT_MODAL,
+           width:WIDTH-80,
+           paddingTop:10,
+           backgroundColor:'white',
+           borderRadius:10,
+},
+textView:{
+    flex:1,
+    alignItems:'center'
+},
+modalText:{
+    margin:5,
+    fontSize:16,
+    fontWeight:'bold'
+},
+modalCloseButton:{
+    
+    alignItems:'center'
+}
     
 
 
