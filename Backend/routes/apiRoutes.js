@@ -110,7 +110,7 @@ router.get("/allVehicles",(req,res)=>{
         });
 
 // get employee booking with their deviceID
-router.get(`/find/:id`,(req,res)=>{
+router.get("/find/:EmployeedeviceID",(req,res)=>{
     const Op = Sequelize.Op;
     const TODAY_START = new Date().setHours(0, 0, 0, 0);
     const NOW = new Date();
@@ -127,14 +127,14 @@ router.get(`/find/:id`,(req,res)=>{
               [Op.gt]: TODAY_START,
               [Op.lt]: NOW
             },
-            EmployeedeviceID:req.params.id
+            EmployeedeviceID:req.params.EmployeedeviceID
           },
        }).then(individualBooking=>res.send(individualBooking))
     });
 
 // update an individual employee booking
 router.get("/update/:id",(req,res)=>{
-db.Bookings.update({ AssignmentStatus: 'Assigned' ,driverId:3}, {
+db.Bookings.update({ AssignmentStatus: 'Assigned' ,driverId:2}, {
     where: {
         id:req.params.id
 

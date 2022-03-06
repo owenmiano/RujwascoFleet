@@ -1,61 +1,71 @@
 import React, { useEffect, useState,useContext } from "react";
 import axios from "axios";
 import { DeviceContext } from "../DeviceContext";
-import { StyleSheet,Text,TouchableOpacity,View, FlatList, Alert,Modal,Dimensions} from "react-native";
+import { StyleSheet,Text,TouchableOpacity,View,TextInput, FlatList, Alert,Modal,Dimensions,Platform} from "react-native";
 
 const WIDTH=Dimensions.get('window').width;
-const HEIGHT_MODAL=280;
+const HEIGHT=Dimensions.get('window').height;
 
 
 
 function HomeScreen({navigation}){
-const[EmployeedeviceID,setEmployeeDeviceID]=useContext(DeviceContext)
-const [booking,setBooking]=useState(DeviceContext)   
-const [isModalVisible,setisModalVisible]=useState(false)
+    const{value,value2}=useContext(DeviceContext)
+const[EmployeedeviceID,setEmployeeDeviceID]=value;
+const [booking,setBooking]=value2;
 
 // const {EmployeedeviceID}=route?.params || {};
 
 useEffect(()=>{
-    axios.get(`http://192.168.100.4:4012/find/${EmployeedeviceID}`,{
-      method: 'GET',
-      headers: {
-          Accept: 'application/json',
-          'Content-Type': 'application/json'
-      }
+   getAllBooking() 
+},[booking])
+
+const getAllBooking=()=>{
+    axios.get(`http://192.168.100.3:4012/find/${EmployeedeviceID}`,{
+  
   })
   .then(response => {
       const result=response.data
       setBooking(result)
-      console.log(result);
+    //   console.log(result);
     }).catch(error =>{
           console.log(error)
     })
+}
 
 
 
-
- 
-   },[])
-
-   const onPressDestination=()=>{
-       setisModalVisible(true)
-   }
-
-
-
-const Item = ({destination,AssignmentStatus}) => {
-          const color =AssignmentStatus=='Pending' ? "#ff0000" : "#008000"
+const Item = ({destination,AssignmentStatus,EmployeeName}) => {
+         
   
 
           return(
     <TouchableOpacity  
     style={{flex:1,marginBottom:8,justifyContent:'center',marginLeft:5 }}
-    onPress={()=>onPressDestination()}
+    onPress={()=>{
+        {AssignmentStatus =='Pending' ? Alert.alert(
+            `Destination: ${destination}`,
+         `${EmployeeName},your booking request to ${destination} has not yet been approved.Kindly Wait`,
+         [
+             { text: "OK" }
+         ]
+       ): Alert.alert(
+        `Destination: ${destination}`,
+     `${EmployeeName},your booking request to ${destination} has been approved.You have been assigned vehicle: Toyota Hilux,RegNo: KCT 940S and your driver is David Thuo Mwangi.`,
+     [
+         { text: "OK" }
+     ]
+   )}
+       
+    }}
     >
             
-    <Text style={{fontSize:17,marginBottom:15,color:'green'}}>Destination: {destination}</Text> 
-    <Text style={{fontSize:13}}>Assignment Status: {AssignmentStatus}</Text> 
-
+    <Text style={{fontSize:17,marginBottom:15,color:'black'}}>Destination: {destination}</Text> 
+        <View style={{flexDirection: 'row'}}>
+            <Text style={{fontSize:13,color:'black',marginRight:5}}>Status:</Text> 
+            <Text style={AssignmentStatus=='Pending' ? styles.pending : styles.assigned}>
+                {AssignmentStatus}
+            </Text>
+        </View>
               </TouchableOpacity>
               
               
@@ -70,40 +80,31 @@ const Item = ({destination,AssignmentStatus}) => {
 
     return(
              <View style={styles.container}>
-                 
+                 {booking.length >0 ?(
                    <FlatList
                     data={booking}
                     extraData={booking}
                      keyExtractor={(trip)=> trip.id.toString()}
                     renderItem={({item})=>(
-                        <Item id={item.id}destination={item.destination} AssignmentStatus={item.AssignmentStatus}/>
+                        <Item id={item.id}
+                        destination={item.destination}
+                        AssignmentStatus={item.AssignmentStatus}
+                        driver={item.driverId}
+                        EmployeeName={item.EmployeeName}
+                        
+                        
+                        />
+                        
                     )}
                      ItemSeparatorComponent={renderSeparator}
                    />
-                   <Modal 
-                   transparent={true}
-                   animationType='fade'
-                   visible={isModalVisible}
-                //    onRequestClose={()=>setisModalVisible(false)}
-                   >
-                       <View style={styles.modalView}>
-                       <View style={styles.modal}>
-                           <View style={styles.textView}>
-                         <Text style={styles.modalText}>Driver Name: Owen Miano Kabugi</Text>
-                         
-                         <Text style={styles.modalText}>Vehicle Name: Toyota Hilux single Cab</Text>
-                         <Text style={styles.modalText}>Vehicle Reg No: KCT 940S</Text>
-                         </View>
-                         <View>
-                              <TouchableOpacity style={styles.modalCloseButton} onPress={()=>setisModalVisible(false)}>
-                                 <Text>Close</Text>
-                              </TouchableOpacity>
-                         </View>
-                       </View>
-                       </View>
-                   </Modal>
-             
-
+                 ):
+                 (
+                 <View style={{justifyContent:'center',alignItems:'center',flex:0.7,}}>
+                     <Text style={{color:'black',fontWeight:'bold',fontSize:16}}>You have no bookings!!</Text>
+                 </View>
+                 )
+                 }
 
 
                  <TouchableOpacity style={styles.fab} onPress={()=> navigation.navigate('createBooking')}>
@@ -134,31 +135,35 @@ fab:{
         fontSize: 20, 
         color: 'white' 
       },
-      modalView:{
-          flex:1,
-          alignItems:'center',
-          justifyContent:'center'
-      },
-      modal:{
-          height:HEIGHT_MODAL,
-           width:WIDTH-80,
-           paddingTop:10,
-           backgroundColor:'white',
-           borderRadius:10,
-},
-textView:{
-    flex:1,
-    alignItems:'center'
-},
-modalText:{
-    margin:5,
-    fontSize:16,
-    fontWeight:'bold'
-},
-modalCloseButton:{
     
-    alignItems:'center'
-}
+modalCloseButton:{
+    marginTop:70,
+     padding:8,
+     marginLeft:70,
+     marginRight:90,
+     height:40,
+     borderRadius:6,
+     backgroundColor:'darkslateblue'
+},
+pending:{
+    color:"#ff0000"
+},
+assigned:{
+    color:"#008000"
+},
+
+modalView:{
+    flex:1,
+    alignItems:'center',
+    justifyContent:'center'
+},
+modal:{
+    height:HEIGHT/2,
+     width:WIDTH-20,
+     paddingTop:10,
+     backgroundColor:'white',
+    
+},
     
 
 

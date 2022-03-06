@@ -10,8 +10,9 @@ function CreateBooking({navigation}){
     const[destination,setDestination]=useState('');
     const[purpose,setPurpose]=useState('')
     const[isPending,setIsPending]=useState(false)
-    const[EmployeedeviceID,setEmployeeDeviceID]=useContext(DeviceContext);
-    // const [booking,setBooking]=useContext(DeviceContext);
+    const {value,value2}=useContext(DeviceContext);
+    const[EmployeedeviceID,setEmployeeDeviceID]=value
+    const [booking,setBooking]=value2;
 
   
 
@@ -35,12 +36,12 @@ function CreateBooking({navigation}){
         const data=JSON.stringify(Bookings)
         console.log(data)
      
-         axios.post('http://192.168.100.4:4012/addBooking',data, {headers: {
+         axios.post('http://192.168.100.3:4012/addBooking',data, {headers: {
             'Content-Type': 'application/json',
             Accept:'application/json'
         }})
          .then(()=>{
-     
+            // setBooking([...booking,data])
             //  Bookings(null)
             setIsPending(false)
 

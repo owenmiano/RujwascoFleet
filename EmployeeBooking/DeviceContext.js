@@ -11,7 +11,7 @@ export const DeviceProvider= props =>{
         setEmployeeDeviceID(DeviceInfo.getUniqueId)
 },[])
     return(
-          <DeviceContext.Provider value={[EmployeedeviceID,setEmployeeDeviceID]}>
+          <DeviceContext.Provider value={{value:[EmployeedeviceID,setEmployeeDeviceID],value2:[booking,setBooking]}}>
             {props.children}
           </DeviceContext.Provider>
     )
