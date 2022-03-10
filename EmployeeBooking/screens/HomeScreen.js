@@ -1,6 +1,9 @@
 import React, { useEffect, useState,useContext } from "react";
 import axios from "axios";
 import { DeviceContext } from "../DeviceContext";
+import NetInfo from '@react-native-community/netinfo';
+import { scale, ScaledSheet } from 'react-native-size-matters';
+
 import { StyleSheet,Text,TouchableOpacity,View,TextInput, FlatList, Alert,Modal,Dimensions,Platform} from "react-native";
 
 const WIDTH=Dimensions.get('window').width;
@@ -9,28 +12,63 @@ const HEIGHT=Dimensions.get('window').height;
 
 
 function HomeScreen({navigation}){
-    const{value,value2}=useContext(DeviceContext)
+    const{value,value2,value3}=useContext(DeviceContext)
 const[EmployeedeviceID,setEmployeeDeviceID]=value;
 const [booking,setBooking]=value2;
-
-// const {EmployeedeviceID}=route?.params || {};
+const[netInfo,setNetInfo]=value3
 
 useEffect(()=>{
-   getAllBooking() 
-},[booking])
+   
+  getAllBooking()
+     
+},[]);
 
 const getAllBooking=()=>{
-    axios.get(`http://192.168.100.3:4012/find/${EmployeedeviceID}`,{
-  
+   
+           
+axios.get(`http://192.168.100.5:4012/find/${EmployeedeviceID}`,{
+     
+})
+.then(response => {
+    const result=response.data
+    setBooking(result)
+  //   console.log(result);
+  }).catch(error =>{
+        console.log(error)
   })
-  .then(response => {
-      const result=response.data
-      setBooking(result)
-    //   console.log(result);
-    }).catch(error =>{
-          console.log(error)
-    })
 }
+
+
+
+
+// NetInfo.fetch().then((state) => {
+//     {state.isConnected ? 
+//       getAllBooking=()=>{
+//         axios.get(`http://192.168.100.5:4012/find/${EmployeedeviceID}`,{
+     
+//      })
+//      .then(response => {
+//          const result=response.data
+//          setBooking(result)
+//        //   console.log(result);
+//        }).catch(error =>{
+//              console.log(error)
+//        })
+//       }
+//        :
+//        (
+//         <View style={{justifyContent:'center',alignItems:'center',flex:0.7,}}>
+//         <Text style={{color:'black',fontWeight:'bold',fontSize:16}}>waiting for internet connection!!</Text>
+//     </View>
+//        )
+   
+
+//     }
+//     // console.log(state.isConnected)
+
+// })
+
+
 
 
 
@@ -40,7 +78,7 @@ const Item = ({destination,AssignmentStatus,EmployeeName}) => {
 
           return(
     <TouchableOpacity  
-    style={{flex:1,marginBottom:8,justifyContent:'center',marginLeft:5 }}
+    style={{flex:scale(1),marginBottom:scale(8),justifyContent:'center',marginLeft:scale(5) }}
     onPress={()=>{
         {AssignmentStatus =='Pending' ? Alert.alert(
             `Destination: ${destination}`,
@@ -59,9 +97,9 @@ const Item = ({destination,AssignmentStatus,EmployeeName}) => {
     }}
     >
             
-    <Text style={{fontSize:17,marginBottom:15,color:'black'}}>Destination: {destination}</Text> 
+    <Text style={{fontSize:scale(17),marginBottom:scale(15),color:'black'}}>Destination: {destination}</Text> 
         <View style={{flexDirection: 'row'}}>
-            <Text style={{fontSize:13,color:'black',marginRight:5}}>Status:</Text> 
+            <Text style={{fontSize:scale(13),color:'black',marginRight:scale(5)}}>Status:</Text> 
             <Text style={AssignmentStatus=='Pending' ? styles.pending : styles.assigned}>
                 {AssignmentStatus}
             </Text>
@@ -80,13 +118,14 @@ const Item = ({destination,AssignmentStatus,EmployeeName}) => {
 
     return(
              <View style={styles.container}>
-                 {booking.length >0 ?(
+                {booking.length >0 ?(
                    <FlatList
                     data={booking}
                     extraData={booking}
-                     keyExtractor={(trip)=> trip.id.toString()}
+                     keyExtractor={item=> String(item.id)}
                     renderItem={({item})=>(
-                        <Item id={item.id}
+                        <Item 
+                        key={item.id}
                         destination={item.destination}
                         AssignmentStatus={item.AssignmentStatus}
                         driver={item.driverId}
@@ -100,8 +139,8 @@ const Item = ({destination,AssignmentStatus,EmployeeName}) => {
                    />
                  ):
                  (
-                 <View style={{justifyContent:'center',alignItems:'center',flex:0.7,}}>
-                     <Text style={{color:'black',fontWeight:'bold',fontSize:16}}>You have no bookings!!</Text>
+                 <View style={{justifyContent:'center',alignItems:'center',flex:scale(0.7)}}>
+                     <Text style={{color:'black',fontWeight:'bold',fontSize:scale(16)}}>You have no bookings!!</Text>
                  </View>
                  )
                  }
@@ -115,36 +154,28 @@ const Item = ({destination,AssignmentStatus,EmployeeName}) => {
              
         )
 }
-const styles=StyleSheet.create({
+const styles=ScaledSheet.create({
      container:{
      flex:1,
 },
 fab:{
     position: 'absolute', 
-    width: 56, 
-    height: 56, 
+    width: '56@s', 
+    height: '56@s', 
     alignItems: 'center', 
     justifyContent: 'center', 
-    right: 20, 
-    bottom: 20, 
+    right: '20@s', 
+    bottom: '20@s', 
     backgroundColor: 'darkslateblue', 
-    borderRadius: 100, 
+    borderRadius: '100@s', 
   
     },
     fabIcon: { 
-        fontSize: 20, 
+        fontSize: '20@s', 
         color: 'white' 
       },
     
-modalCloseButton:{
-    marginTop:70,
-     padding:8,
-     marginLeft:70,
-     marginRight:90,
-     height:40,
-     borderRadius:6,
-     backgroundColor:'darkslateblue'
-},
+
 pending:{
     color:"#ff0000"
 },
@@ -152,19 +183,7 @@ assigned:{
     color:"#008000"
 },
 
-modalView:{
-    flex:1,
-    alignItems:'center',
-    justifyContent:'center'
-},
-modal:{
-    height:HEIGHT/2,
-     width:WIDTH-20,
-     paddingTop:10,
-     backgroundColor:'white',
-    
-},
-    
+
 
 
 })

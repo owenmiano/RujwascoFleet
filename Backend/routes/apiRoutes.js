@@ -134,12 +134,12 @@ router.get("/find/:EmployeedeviceID",(req,res)=>{
 
 // update an individual employee booking
 router.get("/update/:id",(req,res)=>{
-db.Bookings.update({ AssignmentStatus: 'Assigned' ,driverId:2}, {
+db.Bookings.update({ AssignmentStatus: 'Approved' ,driverId:2}, {
     where: {
         id:req.params.id
 
     }
-}).then(updateBooking=>res.send(`Record with id ${id} has been updated successfully`))
+}).then(updateBooking=>res.send(updateBooking))
 .catch(error=>res.send(error))
 })
 

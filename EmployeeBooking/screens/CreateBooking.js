@@ -21,7 +21,43 @@ function CreateBooking({navigation}){
          e.preventDefault();
          setIsPending(true);
          
-           
+         if(EmployeeName.trim().length == 0)
+         {
+            setIsPending(false)
+          Alert.alert("Sorry, something went wrong!","Employee name is required",
+          [
+            {
+                text:"Try Again",
+            }
+        ]
+          )
+         }
+         else if(destination.trim().length == 0)
+         {
+            setIsPending(false)
+            Alert.alert("Sorry, something went wrong!","Destination is required",
+            [
+              {
+                  text:"Try Again",
+              }
+          ]
+            )
+         }
+         else if(purpose.trim().length == 0)
+         {
+            setIsPending(false)
+            Alert.alert("Sorry, something went wrong!","Purpose is required",
+            [
+              {
+                  text:"Try Again",
+              }
+          ]
+            )
+         }
+         else
+         {
+          //all your API here
+         
 
          
 
@@ -36,13 +72,13 @@ function CreateBooking({navigation}){
         const data=JSON.stringify(Bookings)
         console.log(data)
      
-         axios.post('http://192.168.100.3:4012/addBooking',data, {headers: {
+      axios.post('http://192.168.100.5:4012/addBooking',data, {headers: {
             'Content-Type': 'application/json',
             Accept:'application/json'
         }})
          .then(()=>{
             // setBooking([...booking,data])
-            //  Bookings(null)
+             setBooking(prevBooking => [...prevBooking, Bookings])
             setIsPending(false)
 
             Alert.alert(
@@ -67,6 +103,7 @@ function CreateBooking({navigation}){
                  ]
            )
                  } )
+                }
            
      }
     return(
