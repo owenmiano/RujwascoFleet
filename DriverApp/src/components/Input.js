@@ -16,10 +16,10 @@ function Input({label,iconName,password,onFocus=()=>{},error,...props}) {
          ?COLORS.darkBlue
          :COLORS.light
          }]}>
-              <AntDesign name={iconName} style={{fontSize:22,color:"black",marginRight:10}}/>   
+              <Icon name={iconName} style={{fontSize:24,color:"black",marginRight:10}}/>   
               <TextInput 
                secureTextEntry={hidePassword}
-               style={{color:COLORS.light,flex:1}}
+               style={{color:COLORS.black,flex:1}}
                autoCorrect={false}
                onFocus={()=>{
                   onFocus();
@@ -46,7 +46,8 @@ const styles=StyleSheet.create({
     label:{
         marginVertical:5,
         fontSize:14,
-        color:COLORS.grey
+        color:COLORS.black,
+ 
     },
     inputContainer:{
        height:55,
