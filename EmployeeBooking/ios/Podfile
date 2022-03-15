@@ -14,6 +14,8 @@ target 'EmployeeBooking' do
 
   pod 'RNDeviceInfo', :path => '../node_modules/react-native-device-info'
 
+  pod 'RNVectorIcons', :path => '../node_modules/react-native-vector-icons'
+
   target 'EmployeeBookingTests' do
     inherit! :complete
     # Pods for testing

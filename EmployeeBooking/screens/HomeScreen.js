@@ -1,10 +1,11 @@
-import React, { useEffect, useState,useContext } from "react";
+import React, { useEffect, useState,useContext,useCallback } from "react";
 import axios from "axios";
 import { DeviceContext } from "../DeviceContext";
 import NetInfo from '@react-native-community/netinfo';
 import { scale, ScaledSheet } from 'react-native-size-matters';
 
-import { StyleSheet,Text,TouchableOpacity,View,TextInput, FlatList, Alert,Modal,Dimensions,Platform} from "react-native";
+import {ActivityIndicator,Text,TouchableOpacity,View,TextInput, FlatList, Alert,Modal,Dimensions,Platform} from "react-native";
+import COLORS from "../components/Colors";
 
 const WIDTH=Dimensions.get('window').width;
 const HEIGHT=Dimensions.get('window').height;
@@ -16,67 +17,31 @@ function HomeScreen({navigation}){
 const[EmployeedeviceID,setEmployeeDeviceID]=value;
 const [booking,setBooking]=value2;
 const[netInfo,setNetInfo]=value3
+const[isLoading,setIsLoading]=useState(true)
+
 
 useEffect(()=>{
-   
-  getAllBooking()
-     
-},[]);
-
-const getAllBooking=()=>{
-   
-           
-axios.get(`http://192.168.100.5:4012/find/${EmployeedeviceID}`,{
-     
-})
-.then(response => {
-    const result=response.data
-    setBooking(result)
-  //   console.log(result);
-  }).catch(error =>{
-        console.log(error)
-  })
-}
-
-
-
-
-// NetInfo.fetch().then((state) => {
-//     {state.isConnected ? 
-//       getAllBooking=()=>{
-//         axios.get(`http://192.168.100.5:4012/find/${EmployeedeviceID}`,{
-     
-//      })
-//      .then(response => {
-//          const result=response.data
-//          setBooking(result)
-//        //   console.log(result);
-//        }).catch(error =>{
-//              console.log(error)
-//        })
-//       }
-//        :
-//        (
-//         <View style={{justifyContent:'center',alignItems:'center',flex:0.7,}}>
-//         <Text style={{color:'black',fontWeight:'bold',fontSize:16}}>waiting for internet connection!!</Text>
-//     </View>
-//        )
-   
-
-//     }
-//     // console.log(state.isConnected)
-
-// })
-
+    if(netInfo){
+    try{
+        axios.get(`http://192.168.100.4:4012/find/${EmployeedeviceID}`)
+           .then(response => {
+           setIsLoading(false)
+           const result=response.data
+           setBooking(result)
+           console.log(result);
+           })
+        }catch(error){
+           setIsLoading(false)
+          console.log(error)
+         }
+        }    
+},[JSON.stringify(booking)])
 
 
 
 
 const Item = ({destination,AssignmentStatus,EmployeeName}) => {
-         
-  
-
-          return(
+    return(
     <TouchableOpacity  
     style={{flex:scale(1),marginBottom:scale(8),justifyContent:'center',marginLeft:scale(5) }}
     onPress={()=>{
@@ -97,13 +62,13 @@ const Item = ({destination,AssignmentStatus,EmployeeName}) => {
     }}
     >
             
-    <Text style={{fontSize:scale(17),marginBottom:scale(15),color:'black'}}>Destination: {destination}</Text> 
-        <View style={{flexDirection: 'row'}}>
-            <Text style={{fontSize:scale(13),color:'black',marginRight:scale(5)}}>Status:</Text> 
-            <Text style={AssignmentStatus=='Pending' ? styles.pending : styles.assigned}>
-                {AssignmentStatus}
-            </Text>
-        </View>
+<Text style={{fontSize:scale(17),marginBottom:scale(15),color:'black'}}>Destination: {destination}</Text> 
+    <View style={{flexDirection: 'row'}}>
+        <Text style={{fontSize:scale(13),color:'black',marginRight:scale(5)}}>Status:</Text> 
+        <Text style={AssignmentStatus=='Pending' ? styles.pending : styles.assigned}>
+            {AssignmentStatus}
+        </Text>
+    </View>
               </TouchableOpacity>
               
               
@@ -117,38 +82,48 @@ const Item = ({destination,AssignmentStatus,EmployeeName}) => {
     }
 
     return(
-             <View style={styles.container}>
-                {booking.length >0 ?(
-                   <FlatList
-                    data={booking}
-                    extraData={booking}
-                     keyExtractor={item=> String(item.id)}
-                    renderItem={({item})=>(
-                        <Item 
-                        key={item.id}
-                        destination={item.destination}
-                        AssignmentStatus={item.AssignmentStatus}
-                        driver={item.driverId}
-                        EmployeeName={item.EmployeeName}
-                        
-                        
-                        />
-                        
-                    )}
-                     ItemSeparatorComponent={renderSeparator}
-                   />
-                 ):
-                 (
-                 <View style={{justifyContent:'center',alignItems:'center',flex:scale(0.7)}}>
-                     <Text style={{color:'black',fontWeight:'bold',fontSize:scale(16)}}>You have no bookings!!</Text>
-                 </View>
-                 )
-                 }
+    <View style={styles.container}>
+    {!netInfo ? (
+    
+    <View style={{flexDirection:'column',justifyContent:'center',alignItems:'center',flex:scale(0.7)}}>
+    <ActivityIndicator size="large" color="blue" style={{marginRight:5}}/>
+    <Text style={{alignSelf:'center',color:COLORS.black}}>
+        Waiting for internet connection
+    </Text>
+    </View>
+   
+    ): booking.length >0 ?(
+        <FlatList
+            data={booking}
+            extraData={booking}
+            keyExtractor={item=> String(item.id)}
+            renderItem={({item})=>(
+                <Item 
+                key={item.id}
+                destination={item.destination}
+                AssignmentStatus={item.AssignmentStatus}
+                driver={item.driverId}
+                EmployeeName={item.EmployeeName}
+                
+                
+                />
+                
+            )}
+            ItemSeparatorComponent={renderSeparator}
+        />
+        ):
+        (
+        <View style={{justifyContent:'center',alignItems:'center',flex:scale(0.7)}}>
+            <Text style={{color:'black',fontWeight:'bold',fontSize:scale(16)}}>You have no bookings!!</Text>
+        
+        </View>
+        )
+        }
+    
 
-
-                 <TouchableOpacity style={styles.fab} onPress={()=> navigation.navigate('createBooking')}>
-                     <Text style={styles.fabIcon}>+</Text>
-                 </TouchableOpacity>
+    <TouchableOpacity style={styles.fab} onPress={()=> navigation.navigate('createBooking')}>
+        <Text style={styles.fabIcon}>+</Text>
+    </TouchableOpacity>
                
              </View>
              
