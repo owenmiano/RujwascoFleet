@@ -9,7 +9,7 @@ function LoginScreen({navigation}) {
    const {value}=useContext(DeviceContext)
    const [workerID,setWorkerID]=useState('')
    const [errors,setErrors]=useState()
-   const[netInfo,setNetInfo] =useState('');
+   const[netInfo,setNetInfo] =value;
   
 const handleError=(errorMessage)=>{
    setErrors(errorMessage)
@@ -20,7 +20,8 @@ const validate=()=>{
   Keyboard.dismiss()
     if(!workerID){
       handleError('This field cannot be empty')
-  } else if(!netInfo){
+  } 
+   if(!netInfo){
     Alert.alert("You are Offline!","Please Connect To the Internet",
     [
       {
@@ -29,6 +30,7 @@ const validate=()=>{
   ]
     )
   }
+  navigation.navigate('home')
 }
 
 
