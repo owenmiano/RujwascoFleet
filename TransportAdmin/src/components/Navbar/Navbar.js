@@ -1,10 +1,15 @@
 import React, { useState } from 'react'
 import { makeStyles } from '@mui/styles';
-import {AppBar, Box, Button, Tab, Tabs, Toolbar} from '@material-ui/core'
-import {FiBookOpen} from 'react-icons/fi'
+import {AppBar, Box,Tab, Tabs, Toolbar,useMediaQuery,useTheme} from '@material-ui/core'
+import {BiTask} from 'react-icons/bi'
 import {MdEmojiTransportation} from 'react-icons/md'
+import {FaUsers} from 'react-icons/fa'
 import logo from '../images/logo.png'
 import {Link} from 'react-router-dom';
+import DrawerComponent from './drawerComponent/DrawerComponent'
+
+
+
 const useStyles= makeStyles(theme =>({
     icons:{
         fontSize: '1.4rem',
@@ -20,32 +25,23 @@ const useStyles= makeStyles(theme =>({
 
 
 function Navbar(){
-  
-    
-    const classes = useStyles();
+  const classes = useStyles();
 
     const [value,setValue]=useState(0);
-    // const [anchorEl, setAnchorEl] = useState(null);
-    // const handleOpenMenu = e => {
-    //     setAnchorEl(e.currentTarget);
-    //   };
-    //   const handleCloseMenu = () => {
-    //     setAnchorEl(null);
-    //   };
+   
     const handleChangeTab=(e,newValue)=>{
        setValue(newValue)
     }
 
-   const logout=()=> {
-        localStorage.clear();
-        window.location.href = '/login';
-    }
+    //Breakpoint
+    const theme=useTheme();
 
-
-
+     const isMatch=useMediaQuery(theme.breakpoints.down('sm'))
+        
     return(
+       
             <>
-                <AppBar color='primary' position='fixed'>
+                <AppBar color='primary' position='fixed' padding-bottom='40px' >
 
                         <Toolbar>
                         <Box
@@ -55,20 +51,26 @@ function Navbar(){
                         sx={{
                             height: 64,
                             }}
+                            />
 
-/>
-                                <Tabs 
+                           {isMatch ? <DrawerComponent/>:
+                           (
+                               <>
+                               <Tabs 
                                  value={value}
                                  onChange={handleChangeTab}
                                  indicatorColor='secondary'
                                  className={classes.tabsContainer}
                                 >
-                                    <Tab icon={<FiBookOpen className={classes.icons}/>} component={Link} to="/Book" disableRipple label='Bookings'/>
-                                    <Tab icon={<MdEmojiTransportation className={classes.icons}/>} component={Link} to="/Book" disableRipple label='TRANSPORT'/>
-                                    <Tab icon={<FiBookOpen className={classes.icons}/>} component={Link} to="/home" disableRipple label='Bookings'/>
+                                <Tab icon={<BiTask className={classes.icons}/>} component={Link} to="/" disableRipple label='Bookings'/>
+                                <Tab icon={<MdEmojiTransportation className={classes.icons}/>} component={Link} to="/vehicles" disableRipple label='Vehicles'/>
+                                <Tab icon={<FaUsers className={classes.icons}/>} component={Link} to="/drivers" disableRipple label='Drivers'/>
 
                                     </Tabs>
-                                <Button  
+                               </>
+                           )} 
+                                
+                                {/* <Button  
                                 variant="contained"
                                 color="secondary"
                                
@@ -77,25 +79,13 @@ function Navbar(){
                                 //  onMouseOver={handleOpenMenu}
                                  disableElevation>
                                     
-                            LOG OUT</Button>
+                            LOG OUT</Button> */}
                         </Toolbar>
                 </AppBar>
-                {/* <Menu
-        style={{ marginTop: '50px' }}
-        id='menu'
-        anchorEl={anchorEl}
-        open={Boolean(anchorEl)}
-        onClose={handleCloseMenu}>
-        <MenuItem onClick={handleCloseMenu}>My Account</MenuItem>
-        <MenuItem onClick={handleCloseMenu}>Examination Results</MenuItem>
-        <MenuItem onClick={handleCloseMenu}>Promotions</MenuItem>
-        <MenuItem onClick={handleCloseMenu}>Pending Fees</MenuItem>
-        <MenuItem onClick={handleCloseMenu}>Final Project</MenuItem>
-      </Menu> */}
-
+       
             </>
                   
-           
     )
+   
 }
 export default Navbar;
