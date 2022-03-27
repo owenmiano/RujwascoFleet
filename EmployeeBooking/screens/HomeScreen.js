@@ -2,6 +2,8 @@ import React, { useEffect, useState,useContext,useCallback } from "react";
 import axios from "axios";
 import { DeviceContext } from "../DeviceContext";
 import NetInfo from '@react-native-community/netinfo';
+import PushNotification from "react-native-push-notification";
+
 import { scale, ScaledSheet } from 'react-native-size-matters';
 
 import {ActivityIndicator,Text,TouchableOpacity,View,TextInput, FlatList, Alert,Modal,Dimensions,Platform} from "react-native";
@@ -21,29 +23,47 @@ const[isLoading,setIsLoading]=useState(true)
 
 
 useEffect(()=>{
-    if(netInfo){
-    try{
-        axios.get(`http://192.168.100.4:4012/find/${EmployeedeviceID}`)
-           .then(response => {
-           setIsLoading(false)
-           const result=response.data
-           setBooking(result)
-           console.log(result);
-           })
-        }catch(error){
-           setIsLoading(false)
-          console.log(error)
-         }
-        }    
-},[JSON.stringify(booking)])
+ const fetchData=async()=>{
+     try{
+         setIsLoading(true)
+        await  axios.get(`http://192.168.100.2:4012/${EmployeedeviceID}`)
+              .then(response => {
+              setIsLoading(false)
+              const result=response.data
+              setBooking(result)
+              console.log(result);
+              })
+     }catch(error){
+    setIsLoading(false)
+      console.log(error)
+    }
+     
+}
+const timer = setTimeout(() => {
+            fetchData()     
+}, 2000);
+              
+return () => clearTimeout(timer);
 
 
+},[booking])
 
 
 const Item = ({destination,AssignmentStatus,EmployeeName}) => {
+    // if(AssignmentStatus =='Approved'){
+    //     PushNotification.localNotification({
+    //         channelId:"employee-id",
+    //         title:"EmployeeBooking ",
+    //         allowWhileIdle:true,
+    //         message:`Your booking request to ${destination} has been approved.Click in to view more details`,
+    //         vibrate: true,
+    //         playSound: true,
+
+    //     }); 
+    // }
     return(
     <TouchableOpacity  
-    style={{flex:scale(1),marginBottom:scale(8),justifyContent:'center',marginLeft:scale(5) }}
+     style={{flex:scale(1),marginBottom:scale(8),justifyContent:'center',marginLeft:scale(5) }}
     onPress={()=>{
         {AssignmentStatus =='Pending' ? Alert.alert(
             `Destination: ${destination}`,
@@ -104,9 +124,8 @@ const Item = ({destination,AssignmentStatus,EmployeeName}) => {
                 AssignmentStatus={item.AssignmentStatus}
                 driver={item.driverId}
                 EmployeeName={item.EmployeeName}
-                
-                
                 />
+                
                 
             )}
             ItemSeparatorComponent={renderSeparator}
