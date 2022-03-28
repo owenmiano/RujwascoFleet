@@ -1,5 +1,7 @@
 import './App.css';
 import React from "react"
+import {Toolbar} from '@material-ui/core'
+
 import NavbarThemeComponent from './components/navbar/NavbarThemeComponent';
 import {BrowserRouter as Router,Routes,Route} from "react-router-dom"
 import Bookings from './components/pages/bookings/Bookings'
@@ -11,7 +13,8 @@ function App(){
     return(
         <Router>
           <NavbarThemeComponent/> 
-          <div className='content'>
+           <Toolbar />
+          <div>
            <Routes>
              <Route path="/" element={<Bookings/>} />
              <Route path="/drivers" element={<Drivers/>} />
