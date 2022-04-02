@@ -4,6 +4,7 @@ const router=express.Router();
 const db = require("../models");
 const Sequelize = require('sequelize');
 const _ = require("lodash");
+const { result } = require("lodash");
 /// add vehicle
 router.post("/addVehicle",(req,res) =>{
     db.Vehicles.create({
@@ -62,7 +63,7 @@ router.get("/allVehicles",(req,res)=>{
     });
 
 //get all bookings for today grouped by destination
-    router.get("/GroupedBookings",(req,res)=>{
+    router.get("/AllTodaysBooking",(req,res)=>{
         const Op = Sequelize.Op;
         const TODAY_START = new Date().setHours(0, 0, 0, 0);
         const NOW = new Date();
@@ -76,26 +77,21 @@ router.get("/allVehicles",(req,res)=>{
               },
             
             }).then((AllBookings)=>{
-                 const employees=AllBookings.reduce((groupedPeople,person)=>{
+            //      const employees=AllBookings.reduce((groupedPeople,person)=>{
                     
 
-                   const destination=person.destination;
-                                        
-                  if(groupedPeople[destination]==null) groupedPeople[destination]=[] ;
+            //        const destination=person.destination;
+            //        if(groupedPeople[destination]==null) groupedPeople[destination]=[] ;
+                 
+            //            groupedPeople[destination].push(person)
+                       
 
-                //  if(groupedPeople[destination].length==4) 
-                 groupedPeople[destination].push(person);
-                    
-                //   for(let i=0;i<groupedPeople[destination].length;i++){
-                //       if(groupedPeople[destination][i].length ==4){
-                //     groupedPeople[destination].push(person[i])
+
+
+            // return groupedPeople;
+            //        },Object.create(null))
                    
-                //       }
-                //   }   
-            return groupedPeople;
-                   },Object.create(null))
-                   
-             res.send(employees)
+             res.send(AllBookings)
             })           
    });
     
@@ -110,7 +106,7 @@ router.get("/allVehicles",(req,res)=>{
         });
 
 // get employee booking with their deviceID
-router.get("/find/:EmployeedeviceID",(req,res)=>{
+router.get("/:EmployeedeviceID",(req,res)=>{
     const Op = Sequelize.Op;
     const TODAY_START = new Date().setHours(0, 0, 0, 0);
     const NOW = new Date();
@@ -138,7 +134,13 @@ db.Bookings.update({ AssignmentStatus: 'Approved' ,driverId:2}, {
     where: {
         id:req.params.id
 
-    }
+    },
+    // include: [{
+    //     model: db.drivers,
+       
+    //       attributes: ['driverName','phoneNO']
+        
+    //   }],
 }).then(updateBooking=>res.send(updateBooking))
 .catch(error=>res.send(error))
 })

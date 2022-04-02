@@ -9,10 +9,17 @@ export const DeviceProvider= props =>{
     const [booking,setBooking]=useState([])  
     const[netInfo,setNetInfo] =useState('');
 
-    useEffect(() => {
-      setEmployeeDeviceID(DeviceInfo.getUniqueId)
-       
-},[])
+useEffect(()=>{
+      const deviceId=async()=>{
+          const deviceID=await DeviceInfo.getUniqueId()
+              setEmployeeDeviceID(deviceID)
+      } 
+          
+       deviceId()
+
+  },[])
+  
+
   useEffect(()=>{
     // Subscribe to network state updates
       const network=NetInfo.addEventListener((state) => {

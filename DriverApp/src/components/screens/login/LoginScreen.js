@@ -18,10 +18,13 @@ const handleError=(errorMessage)=>{
 
 const validate=()=>{
   Keyboard.dismiss()
+  let valid=true
     if(!workerID){
       handleError('This field cannot be empty')
+      valid=false
   } 
-   if(!netInfo){
+   else if(!netInfo){
+    valid=false
     Alert.alert("You are Offline!","Please Connect To the Internet",
     [
       {
@@ -30,7 +33,9 @@ const validate=()=>{
   ]
     )
   }
+  if(valid){
   navigation.navigate('home')
+  }
 }
 
 

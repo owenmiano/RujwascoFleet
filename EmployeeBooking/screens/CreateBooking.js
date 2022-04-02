@@ -17,7 +17,6 @@ function CreateBooking({navigation}){
     const {value,value2,value3}=useContext(DeviceContext);
     const [netInfo,setNetInfo]=value3
     const[EmployeedeviceID,setEmployeeDeviceID]=value
-    const [booking,setBooking]=value2;
 
     const handleError=(errorMessage,input)=>{
         setErrors(prevState=>({...prevState,[input]: errorMessage}))
@@ -70,13 +69,13 @@ function CreateBooking({navigation}){
         const data=JSON.stringify(Bookings)
         console.log(data)
      try{
-      axios.post('http://192.168.100.2:4012/addBooking',data, {headers: {
+      axios.post('http://192.168.100.5:4012/addBooking',data, {headers: {
             'Content-Type': 'application/json',
             Accept:'application/json'
         }})
          .then(()=>{
             // setBooking([...booking,data])
-             setBooking(prevBooking => [...prevBooking, Bookings])
+            //  setBooking(prevBooking => [...prevBooking, Bookings])
             setIsPending(false)
 
             Alert.alert(
@@ -87,7 +86,7 @@ function CreateBooking({navigation}){
              ]
            );
            setTimeout(() => {
-            navigation.navigate('home')   
+            navigation.goBack(null)   
              }, 2000); 
           
           })

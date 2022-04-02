@@ -1,12 +1,13 @@
-import React, { useEffect, useState,useContext,useCallback } from "react";
+import React, { useEffect, useState,useContext} from "react";
 import axios from "axios";
 import { DeviceContext } from "../DeviceContext";
-import NetInfo from '@react-native-community/netinfo';
 import PushNotification from "react-native-push-notification";
+import DeviceInfo from 'react-native-device-info'
+
 
 import { scale, ScaledSheet } from 'react-native-size-matters';
 
-import {ActivityIndicator,Text,TouchableOpacity,View,TextInput, FlatList, Alert,Modal,Dimensions,Platform} from "react-native";
+import { ScrollView,RefreshControl,ActivityIndicator,Text,TouchableOpacity,View,TextInput, FlatList, Alert,Modal,Dimensions,Platform} from "react-native";
 import COLORS from "../components/Colors";
 
 const WIDTH=Dimensions.get('window').width;
@@ -19,34 +20,42 @@ function HomeScreen({navigation}){
 const[EmployeedeviceID,setEmployeeDeviceID]=value;
 const [booking,setBooking]=value2;
 const[netInfo,setNetInfo]=value3
-const[isLoading,setIsLoading]=useState(true)
+const [refreshing, setRefreshing] = useState(false);
 
 
-useEffect(()=>{
- const fetchData=async()=>{
-     try{
-         setIsLoading(true)
-        await  axios.get(`http://192.168.100.2:4012/${EmployeedeviceID}`)
-              .then(response => {
-              setIsLoading(false)
-              const result=response.data
-              setBooking(result)
-              console.log(result);
-              })
-     }catch(error){
-    setIsLoading(false)
-      console.log(error)
-    }
-     
+
+
+    useEffect(()=>{
+        if(!EmployeedeviceID) return;
+
+        fetchData()
+    },[EmployeedeviceID,netInfo])
+  
+ 
+  
+   const fetchData=async()=>{
+           try{
+                 await  axios.get(`http://192.168.100.5:4012/${EmployeedeviceID}`).then(response => {
+                             setRefreshing(false)
+                          const result=response.data
+                          setBooking(result)
+                          
+                          })
+                 }catch(error){
+                  console.log(error)
+                } 
+   }
+
+
+    
+
+
+const handleRefresh =()=>{
+    setRefreshing(true)
+    fetchData()
 }
-const timer = setTimeout(() => {
-            fetchData()     
-}, 2000);
-              
-return () => clearTimeout(timer);
 
 
-},[booking])
 
 
 const Item = ({destination,AssignmentStatus,EmployeeName}) => {
@@ -102,7 +111,9 @@ const Item = ({destination,AssignmentStatus,EmployeeName}) => {
     }
 
     return(
+        
     <View style={styles.container}>
+        
     {!netInfo ? (
     
     <View style={{flexDirection:'column',justifyContent:'center',alignItems:'center',flex:scale(0.7)}}>
@@ -116,6 +127,7 @@ const Item = ({destination,AssignmentStatus,EmployeeName}) => {
         <FlatList
             data={booking}
             extraData={booking}
+            
             keyExtractor={item=> String(item.id)}
             renderItem={({item})=>(
                 <Item 
@@ -129,6 +141,13 @@ const Item = ({destination,AssignmentStatus,EmployeeName}) => {
                 
             )}
             ItemSeparatorComponent={renderSeparator}
+            refreshControl={
+                <RefreshControl
+                  refreshing={refreshing}
+                  onRefresh={() => handleRefresh()}
+                  color='#ff0000'
+                />
+            }   
         />
         ):
         (
@@ -143,9 +162,9 @@ const Item = ({destination,AssignmentStatus,EmployeeName}) => {
     <TouchableOpacity style={styles.fab} onPress={()=> navigation.navigate('createBooking')}>
         <Text style={styles.fabIcon}>+</Text>
     </TouchableOpacity>
-               
+    
              </View>
-             
+            
         )
 }
 const styles=ScaledSheet.create({
